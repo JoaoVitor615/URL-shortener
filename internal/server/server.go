@@ -22,16 +22,13 @@ func Run(deps *Dependencies) {
 		w.Write([]byte("pong"))
 	})
 
-	numeric := router.Group(func(r chi.Router) {
+	router.Route("/numeric", func(r chi.Router) {
 		r.Get("/test", deps.URLNumericHandler.Test)
 	})
 
-	random := router.Group(func(r chi.Router) {
+	router.Route("/random", func(r chi.Router) {
 		r.Get("/test", deps.URLRandomHandler.Test)
 	})
-
-	router.Mount("/numeric", numeric)
-	router.Mount("/random", random)
 
 	// Start server
 	addr := os.Getenv("PORT")
