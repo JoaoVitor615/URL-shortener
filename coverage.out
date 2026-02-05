@@ -1,0 +1,26 @@
+mode: set
+github.com/JoaoVitor615/URL-shortener/cmd/api/main.go:5.13,8.2 2 0
+github.com/JoaoVitor615/URL-shortener/internal/core/encoder/encoder.go:3.29,4.14 1 1
+github.com/JoaoVitor615/URL-shortener/internal/core/encoder/encoder.go:4.14,6.3 1 1
+github.com/JoaoVitor615/URL-shortener/internal/core/encoder/encoder.go:8.2,9.14 2 1
+github.com/JoaoVitor615/URL-shortener/internal/core/encoder/encoder.go:9.14,12.3 2 1
+github.com/JoaoVitor615/URL-shortener/internal/core/encoder/encoder.go:13.2,13.16 1 1
+github.com/JoaoVitor615/URL-shortener/internal/core/idgenerator/idgenerator.go:6.23,6.64 1 1
+github.com/JoaoVitor615/URL-shortener/internal/numeric/handler/handler.go:13.82,17.2 1 1
+github.com/JoaoVitor615/URL-shortener/internal/numeric/handler/handler.go:19.74,22.2 2 1
+github.com/JoaoVitor615/URL-shortener/internal/random/handler/handler.go:13.79,17.2 1 1
+github.com/JoaoVitor615/URL-shortener/internal/random/handler/handler.go:19.73,22.2 2 1
+github.com/JoaoVitor615/URL-shortener/internal/numeric/service/domain.go:6.48,8.2 1 1
+github.com/JoaoVitor615/URL-shortener/internal/random/service/domain.go:6.46,8.2 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/dependencies.go:15.38,20.2 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:13.45,19.67 5 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:19.67,22.3 2 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:24.2,24.46 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:24.46,26.3 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:28.2,28.45 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:28.45,30.3 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:32.2,32.15 1 1
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:36.30,40.16 3 0
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:40.16,42.3 1 0
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:43.2,44.58 2 0
+github.com/JoaoVitor615/URL-shortener/internal/server/server.go:44.58,46.3 1 0

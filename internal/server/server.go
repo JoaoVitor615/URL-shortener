@@ -9,9 +9,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Run(deps *Dependencies) {
-
-	// Setup routes with chi
+// NewRouter creates and configures the chi router with all routes
+func NewRouter(deps *Dependencies) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
@@ -30,7 +29,13 @@ func Run(deps *Dependencies) {
 		r.Get("/test", deps.URLRandomHandler.Test)
 	})
 
-	// Start server
+	return router
+}
+
+// Run starts the HTTP server
+func Run(deps *Dependencies) {
+	router := NewRouter(deps)
+
 	addr := os.Getenv("PORT")
 	if addr == "" {
 		addr = ":8080"
