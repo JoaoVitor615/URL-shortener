@@ -3,7 +3,7 @@ package idgenerator
 import (
 	"math"
 
-	"github.com/JoaoVitor615/URL-shortener/internal/encoder"
+	"github.com/JoaoVitor615/URL-shortener/internal/core/encoder"
 )
 
 // not defined as const because of the math.Pow function
