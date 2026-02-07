@@ -22,7 +22,8 @@ func NewRouter(deps *Dependencies) *chi.Mux {
 	})
 
 	router.Route("/numeric", func(r chi.Router) {
-		r.Get("/test", deps.URLNumericHandler.Test)
+		r.Get("/{numericID}", deps.NumericHandler.GetLongURL)
+		r.Get("/", deps.NumericHandler.CreateShortURL)
 	})
 
 	router.Route("/random", func(r chi.Router) {
