@@ -1,8 +1,10 @@
 package service
 
-type URLNumericService struct {
+type INumericService interface {
+	GetLongURL(numericID int) (longURL string, err error)
+	CreateShortURL(longURL string) (shortURL string, err error)
 }
 
-func NewURLNumericService() *URLNumericService {
-	return &URLNumericService{}
+func NewNumericService() INumericService {
+	return &NumericService{}
 }

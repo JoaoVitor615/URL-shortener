@@ -8,13 +8,15 @@ import (
 )
 
 type Dependencies struct {
-	URLNumericHandler *numeric_handler.URLNumericHandler
-	URLRandomHandler  *random_handler.URLRandomHandler
+	NumericHandler   numeric_handler.INumericHandler
+	URLRandomHandler *random_handler.URLRandomHandler
 }
 
 func NewDependencies() *Dependencies {
+	numericService := numeric_service.NewNumericService()
+	randomService := random_service.NewURLRandomService()
 	return &Dependencies{
-		URLNumericHandler: numeric_handler.NewURLNumericHandler(numeric_service.NewURLNumericService()),
-		URLRandomHandler:  random_handler.NewURLRandomHandler(random_service.NewURLRandomService()),
+		NumericHandler:   numeric_handler.NewNumericHandler(numericService),
+		URLRandomHandler: random_handler.NewURLRandomHandler(randomService),
 	}
 }
