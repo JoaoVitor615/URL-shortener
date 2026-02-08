@@ -4,8 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/JoaoVitor615/URL-shortener/internal/numeric/service"
 	"github.com/go-chi/chi/v5"
+
+	"github.com/JoaoVitor615/URL-shortener/internal/numeric/service"
+	"github.com/JoaoVitor615/URL-shortener/internal/pkg/apperrors"
 )
 
 type NumericHandler struct {
@@ -17,13 +19,13 @@ func (h *NumericHandler) GetLongURL(w http.ResponseWriter, r *http.Request) {
 
 	numericIDInt, err := strconv.Atoi(numericID)
 	if err != nil {
-		http.Error(w, "Invalid numeric ID", http.StatusBadRequest)
+		apperrors.WriteError(w, ErrInvalidNumericID)
 		return
 	}
 
 	longURL, err := h.service.GetLongURL(numericIDInt)
 	if err != nil {
-		http.Error(w, "Failed to get long URL", http.StatusInternalServerError)
+		apperrors.WriteError(w, err)
 		return
 	}
 
@@ -35,13 +37,13 @@ func (h *NumericHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) 
 	longURL := r.URL.Query().Get("longURL")
 
 	if longURL == "" {
-		http.Error(w, "Long URL is required", http.StatusBadRequest)
+		apperrors.WriteError(w, ErrURLRequired)
 		return
 	}
 
 	shortURL, err := h.service.CreateShortURL(longURL)
 	if err != nil {
-		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
+		apperrors.WriteError(w, err)
 		return
 	}
 
