@@ -1,6 +1,6 @@
-package repository
+package domain
 
 type IRepositoryShortURL[T any] interface {
-	SaveId(id T, longURL string) (err error)
-	GetId(id T) (longURL string, err error)
+	SaveURL(url *URL[T]) (err error)
+	GetURL(id T) (url *URL[T], err error)
 }
