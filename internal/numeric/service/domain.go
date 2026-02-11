@@ -1,8 +1,10 @@
 package service
 
+import "github.com/JoaoVitor615/URL-shortener/internal/domain"
+
 type INumericService interface {
-	GetLongURL(numericID int) (longURL string, err error)
-	CreateShortURL(longURL string) (shortURL string, err error)
+	GetLongURL(shortURL string) (url *domain.URL[int], err error)
+	CreateShortURL(url *domain.URL[int]) (shortURL string, err error)
 }
 
 func NewNumericService() INumericService {
