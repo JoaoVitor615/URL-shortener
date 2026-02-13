@@ -1,6 +1,8 @@
 package domain
 
+import "context"
+
 type IRepositoryShortURL[T any] interface {
-	SaveURL(url *URL[T]) (err error)
-	GetURL(id T) (url *URL[T], err error)
+	SaveURL(ctx context.Context, url *URL[T]) (err error)
+	GetURL(ctx context.Context, id T) (url *URL[T], err error)
 }
