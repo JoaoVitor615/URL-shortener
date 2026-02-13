@@ -5,9 +5,9 @@ import (
 )
 
 type URL[T any] struct {
-	ID        T         `json:"id"`
-	LongURL   string    `json:"long_url"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        T         `json:"id" dynamodbav:"id"`
+	LongURL   string    `json:"long_url" dynamodbav:"long_url"`
+	CreatedAt time.Time `json:"created_at" dynamodbav:"created_at"`
 }
 
 func NewURL[T any](id T, longURL string) *URL[T] {
