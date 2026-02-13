@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/JoaoVitor615/URL-shortener/internal/core/encoder"
@@ -25,13 +26,13 @@ func (s *NumericService) GetLongURL(shortURL string) (url *domain.URL[int], err 
 		return nil, err
 	}
 
-	return s.repository.GetURL(numericID)
+	return s.repository.GetURL(context.Background(), numericID)
 }
 
 func (s *NumericService) CreateShortURL(url *domain.URL[int]) (shortURL string, err error) {
 	url.ID = idgenerator.GenerateID()
 
-	err = s.repository.SaveURL(url)
+	err = s.repository.SaveURL(context.Background(), url)
 	if err != nil {
 		return "", err
 	}

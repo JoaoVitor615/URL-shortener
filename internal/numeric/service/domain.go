@@ -7,6 +7,8 @@ type INumericService interface {
 	CreateShortURL(url *domain.URL[int]) (shortURL string, err error)
 }
 
-func NewNumericService() INumericService {
-	return &NumericService{}
+func NewNumericService(repository domain.IRepositoryShortURL[int]) INumericService {
+	return &NumericService{
+		repository: repository,
+	}
 }

@@ -33,7 +33,7 @@ func (h *NumericHandler) GetLongURL(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *NumericHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
-	longURL := r.URL.Query().Get("longURL")
+	longURL := r.URL.Query().Get("url")
 
 	if longURL == "" {
 		apperrors.WriteError(w, ErrURLRequired)
