@@ -1,42 +1,56 @@
 package service
 
 import (
+	"context"
+	"net/http"
+
 	"github.com/JoaoVitor615/URL-shortener/internal/core/encoder"
 	"github.com/JoaoVitor615/URL-shortener/internal/core/idgenerator"
+	"github.com/JoaoVitor615/URL-shortener/internal/domain"
+	"github.com/JoaoVitor615/URL-shortener/internal/pkg/apperrors"
+	urlformatter "github.com/JoaoVitor615/URL-shortener/internal/pkg/url_formatter"
+)
+
+var (
+	ErrInvalidNumericID = apperrors.New("Invalid numeric ID", http.StatusBadRequest)
+	ErrIDGeneration     = apperrors.New("Failed to generate ID", http.StatusInternalServerError)
+	ErrDatabaseError    = apperrors.New("Database error", http.StatusInternalServerError)
 )
 
 type NumericService struct {
+	repository domain.IRepositoryShortURL[int]
 }
 
-func (s *NumericService) GetLongURL(numericID int) (longURL string, err error) {
-	// TODO: get the longURL from the database
-	// For now, return not found if ID is 0
-	if numericID == 0 {
-		return "", ErrURLNotFound
+func (s *NumericService) GetLongURL(shortURL string) (url *domain.URL[int], err error) {
+	numericID, err := encoder.Decode(shortURL)
+	if err != nil {
+		return nil, ErrInvalidNumericID
 	}
 
-	return longURL, nil
+	return s.repository.GetURL(context.Background(), numericID)
 }
 
-func (s *NumericService) CreateShortURL(longURL string) (shortURL string, err error) {
-	numericID, err := s.generateNumericID()
+func (s *NumericService) CreateShortURL(url *domain.URL[int]) (shortURL string, err error) {
+	err = url.ValidateLongURL()
 	if err != nil {
 		return "", err
 	}
 
-	// TODO: save the longURL and the numericID in the database
-
-	shortURL = encoder.Encode(numericID)
-
-	return shortURL, nil
-}
-
-func (s *NumericService) generateNumericID() (numericID int, err error) {
-	numericID = idgenerator.GenerateID()
-
-	if numericID == 0 {
-		return 0, ErrIDGeneration
+	existingURL, err := s.repository.GetLongURL(context.Background(), url.LongURL)
+	if err != nil {
+		return "", err
 	}
 
-	return numericID, nil
+	if existingURL.ID != 0 {
+		return urlformatter.FormatURL(encoder.Encode(existingURL.ID))
+	}
+
+	url.ID = idgenerator.GenerateID()
+
+	err = s.repository.SaveURL(context.Background(), url)
+	if err != nil {
+		return "", err
+	}
+
+	return urlformatter.FormatURL(encoder.Encode(url.ID))
 }
