@@ -15,6 +15,7 @@ func NewRouter(deps *Dependencies) *chi.Mux {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.RequestID)
+	router.Use(middleware.StripSlashes)
 
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -22,8 +23,8 @@ func NewRouter(deps *Dependencies) *chi.Mux {
 	})
 
 	router.Route("/numeric", func(r chi.Router) {
-		r.Get("/{numericID}", deps.NumericHandler.GetLongURL)
-		r.Get("/", deps.NumericHandler.CreateShortURL)
+		r.Get("/{shortURL}", deps.NumericHandler.GetLongURL)
+		r.Post("/", deps.NumericHandler.CreateShortURL)
 	})
 
 	router.Route("/random", func(r chi.Router) {

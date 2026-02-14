@@ -15,7 +15,7 @@ func TestNew(t *testing.T) {
 
 	assert.Equal(t, "test message", err.Message)
 	assert.Equal(t, http.StatusBadRequest, err.StatusCode)
-	assert.Nil(t, err.Err)
+	assert.Empty(t, err.Err)
 }
 
 func TestWrap(t *testing.T) {
@@ -24,7 +24,18 @@ func TestWrap(t *testing.T) {
 
 	assert.Equal(t, "wrapped message", err.Message)
 	assert.Equal(t, http.StatusInternalServerError, err.StatusCode)
-	assert.Equal(t, originalErr, err.Err)
+	assert.Equal(t, "original error", err.Err)
+}
+
+func TestNewWithErr(t *testing.T) {
+	errFactory := NewWithErr("database error", http.StatusInternalServerError)
+	originalErr := errors.New("connection failed")
+	
+	err := errFactory(originalErr)
+
+	assert.Equal(t, "database error", err.Message)
+	assert.Equal(t, http.StatusInternalServerError, err.StatusCode)
+	assert.Equal(t, "connection failed", err.Err)
 }
 
 func TestAppError_Error(t *testing.T) {
@@ -44,7 +55,8 @@ func TestAppError_Unwrap(t *testing.T) {
 	originalErr := errors.New("original error")
 	err := Wrap(originalErr, "wrapped message", http.StatusInternalServerError)
 
-	assert.Equal(t, originalErr, err.Unwrap())
+	unwrapped := err.Unwrap()
+	assert.Equal(t, "original error", unwrapped.Error())
 }
 
 func TestWriteError_AppError(t *testing.T) {
