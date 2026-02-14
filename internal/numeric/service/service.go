@@ -31,6 +31,11 @@ func (s *NumericService) GetLongURL(shortURL string) (url *domain.URL[int], err 
 }
 
 func (s *NumericService) CreateShortURL(url *domain.URL[int]) (shortURL string, err error) {
+	err = url.ValidateLongURL()
+	if err != nil {
+		return "", err
+	}
+
 	url.ID = idgenerator.GenerateID()
 
 	err = s.repository.SaveURL(context.Background(), url)
@@ -38,10 +43,5 @@ func (s *NumericService) CreateShortURL(url *domain.URL[int]) (shortURL string, 
 		return "", err
 	}
 
-	shortURL, err = urlformatter.FormatURL(encoder.Encode(url.ID))
-	if err != nil {
-		return "", err
-	}
-
-	return shortURL, nil
+	return urlformatter.FormatURL(encoder.Encode(url.ID))
 }

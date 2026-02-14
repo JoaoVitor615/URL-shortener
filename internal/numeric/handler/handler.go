@@ -12,7 +12,6 @@ import (
 
 var (
 	ErrInvalidNumericID = apperrors.New("Invalid numeric ID", http.StatusBadRequest)
-	ErrURLRequired      = apperrors.New("URL is required", http.StatusBadRequest)
 )
 
 type NumericHandler struct {
@@ -34,11 +33,6 @@ func (h *NumericHandler) GetLongURL(w http.ResponseWriter, r *http.Request) {
 
 func (h *NumericHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	longURL := r.URL.Query().Get("url")
-
-	if longURL == "" {
-		apperrors.WriteError(w, ErrURLRequired)
-		return
-	}
 
 	url := domain.NewURL(0, longURL)
 

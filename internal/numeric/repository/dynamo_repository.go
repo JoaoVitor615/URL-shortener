@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -41,17 +40,15 @@ func (s *DynamoRepository) SaveURL(ctx context.Context, url *domain.URL[int]) er
 	}
 
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String(s.TableName),
-		Item:      item,
-		// Make sure we don't overwrite if the code already exists
+		TableName:           aws.String(s.TableName),
+		Item:                item,
 		ConditionExpression: aws.String("attribute_not_exists(id)"),
 	}
 
-	result, err := s.Client.PutItem(ctx, input)
+	_, err = s.Client.PutItem(ctx, input)
 	if err != nil {
 		return ErrSaveURL(err)
 	}
-	fmt.Println(result)
 	return nil
 }
 
