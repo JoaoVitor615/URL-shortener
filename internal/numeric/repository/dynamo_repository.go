@@ -33,6 +33,33 @@ func NewDynamoRepository(client *dynamodb.Client, tableName string) *DynamoRepos
 	}
 }
 
+func (s *DynamoRepository) GetLongURL(ctx context.Context, longURL string) (url *domain.URL[int], err error) {
+	input := &dynamodb.ScanInput{
+		TableName:        aws.String(s.TableName),
+		FilterExpression: aws.String("long_url = :url"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":url": &types.AttributeValueMemberS{Value: longURL},
+		},
+	}
+
+	output, err := s.Client.Scan(ctx, input)
+	if err != nil {
+		return nil, ErrGetURL(err)
+	}
+
+	if len(output.Items) == 0 {
+		return nil, ErrURLNotFound
+	}
+
+	var result domain.URL[int]
+	err = attributevalue.UnmarshalMap(output.Items[0], &result)
+	if err != nil {
+		return nil, ErrUnmarshalURL(err)
+	}
+
+	return &result, nil
+}
+
 func (s *DynamoRepository) SaveURL(ctx context.Context, url *domain.URL[int]) error {
 	item, err := attributevalue.MarshalMap(url)
 	if err != nil {

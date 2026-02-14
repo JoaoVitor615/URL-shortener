@@ -36,6 +36,15 @@ func (s *NumericService) CreateShortURL(url *domain.URL[int]) (shortURL string, 
 		return "", err
 	}
 
+	existingURL, err := s.repository.GetLongURL(context.Background(), url.LongURL)
+	if err != nil {
+		return "", err
+	}
+
+	if existingURL.ID != 0 {
+		return urlformatter.FormatURL(encoder.Encode(existingURL.ID))
+	}
+
 	url.ID = idgenerator.GenerateID()
 
 	err = s.repository.SaveURL(context.Background(), url)
