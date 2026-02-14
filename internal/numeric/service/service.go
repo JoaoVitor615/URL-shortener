@@ -8,12 +8,13 @@ import (
 	"github.com/JoaoVitor615/URL-shortener/internal/core/idgenerator"
 	"github.com/JoaoVitor615/URL-shortener/internal/domain"
 	"github.com/JoaoVitor615/URL-shortener/internal/pkg/apperrors"
+	urlformatter "github.com/JoaoVitor615/URL-shortener/internal/pkg/url_formatter"
 )
 
 var (
-	ErrURLNotFound   = apperrors.New("URL not found", http.StatusNotFound)
-	ErrIDGeneration  = apperrors.New("Failed to generate ID", http.StatusInternalServerError)
-	ErrDatabaseError = apperrors.New("Database error", http.StatusInternalServerError)
+	ErrInvalidNumericID = apperrors.New("Invalid numeric ID", http.StatusBadRequest)
+	ErrIDGeneration     = apperrors.New("Failed to generate ID", http.StatusInternalServerError)
+	ErrDatabaseError    = apperrors.New("Database error", http.StatusInternalServerError)
 )
 
 type NumericService struct {
@@ -23,7 +24,7 @@ type NumericService struct {
 func (s *NumericService) GetLongURL(shortURL string) (url *domain.URL[int], err error) {
 	numericID, err := encoder.Decode(shortURL)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidNumericID
 	}
 
 	return s.repository.GetURL(context.Background(), numericID)
@@ -37,5 +38,10 @@ func (s *NumericService) CreateShortURL(url *domain.URL[int]) (shortURL string, 
 		return "", err
 	}
 
-	return encoder.Encode(url.ID), nil
+	shortURL, err = urlformatter.FormatURL(encoder.Encode(url.ID))
+	if err != nil {
+		return "", err
+	}
+
+	return shortURL, nil
 }

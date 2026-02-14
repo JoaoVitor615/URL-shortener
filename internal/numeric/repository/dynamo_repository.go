@@ -3,9 +3,11 @@ package repository
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/JoaoVitor615/URL-shortener/internal/domain"
+	"github.com/JoaoVitor615/URL-shortener/internal/pkg/apperrors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -17,6 +19,14 @@ type DynamoRepository struct {
 	TableName string
 }
 
+var (
+	ErrURLNotFound  = apperrors.New("URL not found", http.StatusNotFound)
+	ErrUnmarshalURL = apperrors.NewWithErr("failed to unmarshal url", http.StatusInternalServerError)
+	ErrMarshalURL   = apperrors.NewWithErr("failed to marshal url", http.StatusInternalServerError)
+	ErrSaveURL      = apperrors.NewWithErr("failed to save url", http.StatusInternalServerError)
+	ErrGetURL       = apperrors.NewWithErr("failed to get url", http.StatusInternalServerError)
+)
+
 func NewDynamoRepository(client *dynamodb.Client, tableName string) *DynamoRepository {
 	return &DynamoRepository{
 		Client:    client,
@@ -27,7 +37,7 @@ func NewDynamoRepository(client *dynamodb.Client, tableName string) *DynamoRepos
 func (s *DynamoRepository) SaveURL(ctx context.Context, url *domain.URL[int]) error {
 	item, err := attributevalue.MarshalMap(url)
 	if err != nil {
-		return fmt.Errorf("failed to marshal url: %w", err)
+		return ErrMarshalURL(err)
 	}
 
 	input := &dynamodb.PutItemInput{
@@ -39,7 +49,7 @@ func (s *DynamoRepository) SaveURL(ctx context.Context, url *domain.URL[int]) er
 
 	result, err := s.Client.PutItem(ctx, input)
 	if err != nil {
-		return fmt.Errorf("failed to save url: %w", err)
+		return ErrSaveURL(err)
 	}
 	fmt.Println(result)
 	return nil
@@ -57,17 +67,17 @@ func (s *DynamoRepository) GetURL(ctx context.Context, id int) (*domain.URL[int]
 
 	output, err := s.Client.GetItem(ctx, input)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get url: %w", err)
+		return nil, ErrGetURL(err)
 	}
 
 	if output.Item == nil {
-		return nil, fmt.Errorf("url not found")
+		return nil, ErrURLNotFound
 	}
 
 	var url domain.URL[int]
 	err = attributevalue.UnmarshalMap(output.Item, &url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal url: %w", err)
+		return nil, ErrUnmarshalURL(err)
 	}
 
 	return &url, nil
