@@ -4,13 +4,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 // NewRouter creates and configures the chi router with all routes
-func NewRouter(deps *Dependencies) *chi.Mux {
+func NewRouter(deps *Dependencies) http.Handler {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
@@ -31,19 +33,24 @@ func NewRouter(deps *Dependencies) *chi.Mux {
 		r.Get("/test", deps.URLRandomHandler.Test)
 	})
 
-	return router
+	return otelhttp.NewHandler(router, "http.server")
 }
 
 // Run starts the HTTP server
-func Run(deps *Dependencies) {
+func Run(deps *Dependencies) *http.Server {
 	router := NewRouter(deps)
 
 	addr := os.Getenv("PORT")
 	if addr == "" {
 		addr = ":8080"
 	}
+
 	log.Printf("Server starting on %s", addr)
-	if err := http.ListenAndServe(addr, router); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+
+	return &http.Server{
+		Addr:         addr,
+		Handler:      router,
+		ReadTimeout:  time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 }
