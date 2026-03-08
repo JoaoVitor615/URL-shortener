@@ -7,11 +7,13 @@ import (
 	numeric_service "github.com/JoaoVitor615/URL-shortener/internal/numeric/service"
 	random_handler "github.com/JoaoVitor615/URL-shortener/internal/random/handler"
 	random_service "github.com/JoaoVitor615/URL-shortener/internal/random/service"
+	"github.com/JoaoVitor615/URL-shortener/internal/telemetry"
 )
 
 type Dependencies struct {
 	NumericHandler   numeric_handler.INumericHandler
 	URLRandomHandler *random_handler.URLRandomHandler
+	Metrics          telemetry.Metrics
 }
 
 func NewDependencies() *Dependencies {
@@ -24,5 +26,6 @@ func NewDependencies() *Dependencies {
 	return &Dependencies{
 		NumericHandler:   numeric_handler.NewNumericHandler(numericService),
 		URLRandomHandler: random_handler.NewURLRandomHandler(randomService),
+		Metrics:          telemetry.NewMetrics(),
 	}
 }

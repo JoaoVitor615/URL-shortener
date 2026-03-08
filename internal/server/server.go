@@ -19,6 +19,9 @@ func NewRouter(deps *Dependencies) http.Handler {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.StripSlashes)
 
+	// Metrics middleware
+	router.Use(MetricsMiddleware(deps.Metrics))
+
 	router.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("pong"))
